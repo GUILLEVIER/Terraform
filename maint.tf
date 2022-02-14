@@ -2,7 +2,13 @@
 # Define el provider de AWS
 # ------------------------
 provider "aws" {
+  region = local.region
+}
+
+# Uso de variables locales
+locals {
   region = "us-east-1"
+  ami    = var.ubuntu_ami[local.region]
 }
 
 # Data Source: Subnet
@@ -11,7 +17,7 @@ provider "aws" {
 # Data source que obtiene el id del AZ us-east-1a
 # ------------------------
 data "aws_subnet" "az_a" {
-  availability_zone = "us-east-1a"
+  availability_zone = "${local.region}a"
 }
 
 # ------------------------
@@ -20,7 +26,7 @@ data "aws_subnet" "az_a" {
 # Data Source: Subnet
 # Obtenemos el id de la subnet que se crea por defecto en dicha AZ
 data "aws_subnet" "az_b" {
-  availability_zone = "us-east-1b"
+  availability_zone = "${local.region}b"
 }
 
 # Instancia EC2
@@ -29,7 +35,7 @@ data "aws_subnet" "az_b" {
 # Define una instancia EC2 con AMI Ubuntu
 # ------------------------
 resource "aws_instance" "servidor_1" {
-  ami                    = var.ubuntu_ami["us-east-1"]
+  ami                    = local.ami
   instance_type          = var.tipo_instancia
   vpc_security_group_ids = [aws_security_group.mi_grupo_de_seguridad.id] # Asocia el segurity group a la instancia
   subnet_id              = data.aws_subnet.az_a.id                       # Se agrega el ID de la subnet a la cual queremos desplegar nuestra instancia.
@@ -49,7 +55,7 @@ resource "aws_instance" "servidor_1" {
 # Define una instancia EC2 con AMI Ubuntu
 # ------------------------
 resource "aws_instance" "servidor_2" {
-  ami                    = var.ubuntu_ami["us-east-1"]
+  ami                    = local.ami
   instance_type          = var.tipo_instancia
   vpc_security_group_ids = [aws_security_group.mi_grupo_de_seguridad.id] # Asocia el segurity group a la instancia
   subnet_id              = data.aws_subnet.az_b.id
