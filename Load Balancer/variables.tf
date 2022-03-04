@@ -4,11 +4,11 @@ variable "puerto_servidor" {
   default     = 8080
 
   validation {
-    # Condition: Expresion de forma booleana.
+    # Condition: Expresion de forma booleana
     # 2 elevado a 16 = 65536, para que un puerto sea valido
-    # error_message: Un mensaje de error sobre el porque ha fallado.
+    # error_message: Un mensaje de error sobre el porque ha fallado
     condition          = var.puerto_servidor > 0 && var.puerto_servidor <= 65536
-    errorerror_message = "El valor del puerto debe estar comprendido entre 1 y 65536."
+    error_message = "El valor del puerto debe estar comprendido entre 1 y 65536."
   }
 }
 
